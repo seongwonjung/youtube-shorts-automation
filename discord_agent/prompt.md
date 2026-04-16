@@ -2,16 +2,16 @@
 
 ## 절차
 
-1. `discord_agent/state.json`을 읽어 `last_message_id` 값을 확인한다.
+1. `discord_agent/state.json`을 읽어 `last_timestamp` 값을 확인한다.
 
 2. Discord `#일반` 채널의 최근 메시지를 `mcp__discord__read-messages`로 읽는다.
 
-3. `last_message_id`가 `"0"`이면 (첫 실행):
-   - 읽은 메시지 중 가장 최신 메시지의 ID를 `discord_agent/state.json`에 저장한다.
+3. `last_timestamp`가 `"0"`이면 (첫 실행):
+   - 읽은 메시지 중 가장 최신 메시지의 timestamp를 `discord_agent/state.json`에 저장한다.
    - `mcp__discord__send-message`로 `#일반`에 `"✅ Discord 에이전트가 시작되었습니다. 명령을 입력하세요."` 를 전송한다.
    - 절차를 종료한다 (과거 메시지 실행하지 않음).
 
-4. 읽은 메시지 중 `last_message_id`보다 큰 ID를 가진 메시지를 시간순으로 정렬하여 처리 대상으로 삼는다.
+4. 읽은 메시지 중 timestamp가 `last_timestamp`보다 나중인 메시지를 시간순(오래된 것 먼저)으로 정렬하여 처리 대상으로 삼는다.
 
 5. 처리 대상 메시지가 없으면 아무것도 하지 않고 종료한다.
 
@@ -31,6 +31,6 @@
       - 실패 시: `"❌ 에러\n\`\`\`\n{에러 메시지}\n\`\`\`"`
       - 결과가 1800자를 초과하면 앞 1800자만 전송하고 `\n... (이하 생략)`을 붙인다.
 
-   d. `discord_agent/state.json`의 `last_message_id`를 방금 처리한 메시지의 ID로 업데이트한다.
+   d. `discord_agent/state.json`의 `last_timestamp`를 방금 처리한 메시지의 timestamp로 업데이트한다.
 
 7. 모든 처리 대상 메시지를 처리했으면 종료한다.
