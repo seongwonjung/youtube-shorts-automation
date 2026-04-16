@@ -7,8 +7,6 @@ class Settings(BaseSettings):
     elevenlabs_api_key: str
     flux_api_key: str
     kling_api_key: str
-    perplexity_api_key: str
-    openai_api_key: str = ""
     youtube_client_secret_path: str = "secrets/youtube_client_secret.json"
 
     # Pipeline behaviour

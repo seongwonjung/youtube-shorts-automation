@@ -50,8 +50,6 @@ def _base_env(monkeypatch):
     monkeypatch.setenv("ELEVENLABS_API_KEY", "el-test")
     monkeypatch.setenv("FLUX_API_KEY", "flux-test")
     monkeypatch.setenv("KLING_API_KEY", "kling-test")
-    monkeypatch.setenv("PERPLEXITY_API_KEY", "perp-test")
-    monkeypatch.setenv("OPENAI_API_KEY", "oai-test")
 
 
 def test_settings_loads_from_env(monkeypatch):
