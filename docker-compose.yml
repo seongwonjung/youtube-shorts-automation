@@ -1,0 +1,13 @@
+services:
+  pipeline:
+    build: .
+    env_file: .env
+    volumes:
+      - ./runs:/app/runs
+      - ./cache:/app/cache
+      - ./secrets:/app/secrets
+      - ./channels:/app/channels
+    command: >
+      --urls "https://youtube.com/shorts/example"
+      --topic "테스트 주제"
+      --channel channel_a
