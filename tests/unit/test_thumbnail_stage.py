@@ -71,3 +71,34 @@ async def test_uses_topic_when_no_thumbnail_prompt(tmp_path):
 
     call_kwargs = flux_inst.generate_thumbnail.call_args
     assert call_kwargs.kwargs["prompt"] == "test-topic"
+
+
+@pytest.mark.asyncio
+async def test_uses_channel_thumbnail_ratio(tmp_path):
+    ctx = _make_ctx(tmp_path)
+    ctx.channel.thumbnail_ratio = "portrait_9_16"
+    stage = ThumbnailStage(settings=_make_settings())
+
+    with patch("src.stages.thumbnail.FluxService") as MockFlux:
+        flux_inst = MockFlux.return_value
+        flux_inst.generate_thumbnail = AsyncMock(return_value="thumbnail.png")
+
+        await stage.run(ctx)
+
+    call_kwargs = flux_inst.generate_thumbnail.call_args
+    assert call_kwargs.kwargs["image_size"] == "portrait_9_16"
+
+
+@pytest.mark.asyncio
+async def test_default_thumbnail_ratio_is_landscape(tmp_path):
+    ctx = _make_ctx(tmp_path)
+    stage = ThumbnailStage(settings=_make_settings())
+
+    with patch("src.stages.thumbnail.FluxService") as MockFlux:
+        flux_inst = MockFlux.return_value
+        flux_inst.generate_thumbnail = AsyncMock(return_value="thumbnail.png")
+
+        await stage.run(ctx)
+
+    call_kwargs = flux_inst.generate_thumbnail.call_args
+    assert call_kwargs.kwargs["image_size"] == "landscape_16_9"

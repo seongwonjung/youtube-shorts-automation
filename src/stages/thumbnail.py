@@ -23,6 +23,7 @@ class ThumbnailStage(BaseStage):
         image_path = await flux.generate_thumbnail(
             prompt=prompt,
             run_dir=ctx.run_dir,
+            image_size=ctx.channel.thumbnail_ratio,
         )
 
         ctx.thumbnail = ThumbnailResult(image_path=image_path)

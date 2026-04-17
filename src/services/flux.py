@@ -53,6 +53,7 @@ class FluxService:
         self,
         prompt: str,
         run_dir: Path,
+        image_size: str = "landscape_16_9",
     ) -> str:
         out_path = run_dir / "thumbnail.png"
 
@@ -65,7 +66,7 @@ class FluxService:
                 },
                 json={
                     "prompt": prompt,
-                    "image_size": "landscape_16_9",
+                    "image_size": image_size,
                     "num_inference_steps": 28,
                     "guidance_scale": 3.5,
                     "num_images": 1,

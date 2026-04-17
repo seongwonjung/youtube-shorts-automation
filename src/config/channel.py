@@ -19,6 +19,7 @@ class ChannelConfig(BaseModel):
     subtitle_style: SubtitleStyle = SubtitleStyle()
     bgm_enabled: bool = True
     bgm_volume: float = 0.15
+    thumbnail_ratio: str = "landscape_16_9"  # A: landscape_16_9 | B: portrait_9_16
 
 
 def load_channel_config(
