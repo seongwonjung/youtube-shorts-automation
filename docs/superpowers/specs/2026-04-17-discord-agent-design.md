@@ -65,11 +65,23 @@ discord_agent/
 ```
 
 - `last_message_id`: 마지막으로 처리한 Discord 메시지 ID
-- 초기값 `"0"` → 첫 실행 시 현재 채널의 최신 메시지 ID로 초기화 (과거 메시지 재실행 방지)
+- 초기값 `"0"` → 첫 루프 실행 시 채널의 현재 최신 메시지 ID를 읽어 state.json에 덮어쓴다 (과거 메시지 재실행 방지). 이후부터는 해당 ID 이후 메시지만 처리.
 
 ### 2.2 `discord_agent/prompt.md`
 
-루프마다 실행할 지시문. Claude Code가 이 파일을 읽고 동작을 수행한다.
+루프마다 실행할 지시문. 내용:
+
+```
+1. discord_agent/state.json을 읽어 last_message_id를 확인한다.
+2. Discord #일반 채널의 최근 메시지를 읽는다.
+3. last_message_id가 "0"이면 현재 최신 메시지 ID를 state.json에 저장하고 종료한다.
+4. last_message_id보다 큰 ID의 새 메시지가 있으면:
+   a. Discord에 "⚙️ 작업 시작: [메시지 내용]"을 전송한다.
+   b. 메시지를 작업 지시로 해석하여 수행한다.
+   c. 결과를 Discord에 전송한다 (성공: ✅, 실패: ❌, 최대 1800자).
+   d. state.json의 last_message_id를 처리한 최신 메시지 ID로 업데이트한다.
+5. 새 메시지가 없으면 아무것도 하지 않는다.
+```
 
 ---
 

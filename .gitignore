@@ -7,3 +7,6 @@ __pycache__/
 *.pyc
 .venv/
 .worktrees/
+.mcp.json
+.claude/
+discord_agent/state.json
