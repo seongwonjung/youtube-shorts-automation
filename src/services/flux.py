@@ -48,3 +48,38 @@ class FluxService:
             image_path.write_bytes(img_resp.content)
 
         return str(image_path.relative_to(run_dir)).replace("\\", "/")
+
+    async def generate_thumbnail(
+        self,
+        prompt: str,
+        run_dir: Path,
+    ) -> str:
+        out_path = run_dir / "thumbnail.png"
+
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            resp = await client.post(
+                f"{_FAL_BASE}/{_FLUX_MODEL}",
+                headers={
+                    "Authorization": f"Key {self._api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "prompt": prompt,
+                    "image_size": "landscape_16_9",
+                    "num_inference_steps": 28,
+                    "guidance_scale": 3.5,
+                    "num_images": 1,
+                    "enable_safety_checker": False,
+                    "output_format": "png",
+                },
+            )
+            resp.raise_for_status()
+            data = resp.json()
+
+        image_url = data["images"][0]["url"]
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            img_resp = await client.get(image_url)
+            img_resp.raise_for_status()
+            out_path.write_bytes(img_resp.content)
+
+        return str(out_path.relative_to(run_dir)).replace("\\", "/")
