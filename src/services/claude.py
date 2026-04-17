@@ -1,6 +1,6 @@
 import json
 import anthropic
-from src.pipeline.context import BenchmarkResult, ScriptResult
+from src.pipeline.context import BenchmarkResult, ScriptResult, Scene, StoryboardResult, EnhancedScene
 
 
 _BENCHMARK_SYSTEM = """당신은 YouTube Shorts 콘텐츠 전략가입니다.
@@ -104,3 +104,37 @@ class ClaudeService:
         )
         text = next(b.text for b in response.content if b.type == "text")
         return ScriptResult.model_validate_json(text)
+
+    async def enhance_storyboard(
+        self,
+        scenes: list[Scene],
+        visual_style: str,
+        benchmark_style: str,
+    ) -> StoryboardResult:
+        scenes_json = json.dumps(
+            [{"scene_no": s.scene_no, "image_prompt": s.image_prompt} for s in scenes],
+            ensure_ascii=False,
+            indent=2,
+        )
+        user_content = (
+            f"채널 비주얼 스타일: {visual_style}\n"
+            f"벤치마크 비주얼 스타일: {benchmark_style}\n\n"
+            f"씬 목록:\n{scenes_json}\n\n"
+            "각 씬에 대해 enhanced_prompt와 negative_prompt를 생성하세요.\n"
+            "응답은 JSON만 포함해야 합니다. 추가 텍스트나 마크다운 코드블록을 쓰지 마세요.\n\n"
+            "스키마:\n"
+            '{"scenes": [{"scene_no": integer, "enhanced_prompt": "string", "negative_prompt": "string"}], '
+            '"visual_style": "string"}'
+        )
+        response = self._client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=4096,
+            system=[{
+                "type": "text",
+                "text": "당신은 YouTube Shorts 비주얼 디렉터입니다. 이미지 프롬프트를 강화하고 negative prompt를 생성하세요.",
+                "cache_control": {"type": "ephemeral"},
+            }],
+            messages=[{"role": "user", "content": user_content}],
+        )
+        text = next(b.text for b in response.content if b.type == "text")
+        return StoryboardResult.model_validate_json(text)
