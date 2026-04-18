@@ -1,0 +1,20 @@
+{
+  "channel_id": "channel_a",
+  "youtube_channel_id": "UCxxxxxxxxxxxxxxxxxxxxxxx",
+  "voice_id": "your-elevenlabs-voice-id",
+  "concurrency": 3,
+  "visual_style_presets": {
+    "default": "dark cinematic, moody lighting, Korean aesthetic",
+    "bright": "minimal white, clean modern, bright lighting",
+    "retro": "film grain, vintage color grading, nostalgic"
+  },
+  "subtitle_style": {
+    "font": "NanumGothicBold",
+    "size": 52,
+    "color": "white",
+    "outline": 3,
+    "position": "bottom_third"
+  },
+  "bgm_enabled": true,
+  "bgm_volume": 0.15
+}
